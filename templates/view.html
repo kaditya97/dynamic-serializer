@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% load static %} {% load leaflet_tags %}
+  <head>
+    {% leaflet_js %} {% leaflet_css %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>{{sucess}}</title>
+    <style>
+      #gis {
+        width: 98vw;
+        height: 84vh;
+      }
+      a {
+        text-decoration: none;
+      }
+    </style>
+    <script
+      type="text/javascript"
+      src="{% static 'dist/leaflet.ajax.js' %}"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.js"></script>
+  </head>
+  <body>
+    <h3><a href="/">Shapefiles</a></h3>
+    <script>
+      function showPage1() {
+        var sel = document.getElementById("sel2");
+        var option = sel.options[sel.selectedIndex].value;
+        window.open(option, "_top");
+      }
+    </script>
+    <select id="sel1" onchange="giveSelection(this.value)">
+      <option value="">Select Palika Type</option>
+      <option value="/Shape/Upamahanagarpalika">Upamahanagarpalika</option>
+      <option value="/Shape/Nagarpalika">Nagarpalika</option>
+      <option value="/Shape/Gaunpalika">Gaunpalika</option>
+    </select>
+    <select id="sel2">
+      <option data-option="" value="">Select Type First</option>
+      <option
+        data-option="/Shape/Upamahanagarpalika"
+        value="/Shape/Upamahanagarpalika/Jitpur-Simara"
+        >Jitpur Simara</option
+      >
+      <option
+        data-option="/Shape/Upamahanagarpalika"
+        value="/Shape/Upamahanagarpalika/Kalaiya"
+        >Kalaiya</option
+      >
+      <option
+        data-option="/Shape/Upamahanagarpalika"
+        value="/Shape/Upamahanagarpalika"
+        >Select Upamahanagarpalika</option
+      >
+      <option
+        data-option="/Shape/Nagarpalika"
+        value="/Shape/Nagarpalika/Kolhabi"
+        >Kolhabi</option
+      >
+      <option
+        data-option="/Shape/Nagarpalika"
+        value="/Shape/Nagarpalika/Mahagadhimai"
+        >Mahagadhimai</option
+      >
+      <option
+        data-option="/Shape/Nagarpalika"
+        value="/Shape/Nagarpalika/Nijgadh"
+        >Nijgadh</option
+      >
+      <option
+        data-option="/Shape/Nagarpalika"
+        value="/Shape/Nagarpalika/Pacharauta"
+        >Pacharauta</option
+      >
+      <option
+        data-option="/Shape/Nagarpalika"
+        value="/Shape/Nagarpalika/Simraungadh"
+        >Simraungadh</option
+      >
+      <option data-option="/Shape/Nagarpalika" value="/Shape/Nagarpalika"
+        >Select Nagarpalika</option
+      >
+      <option
+        data-option="/Shape/Gaunpalika"
+        value="/Shape/Gaunpalika/Adarshkotwal"
+        >Adarshkotwal</option
+      >
+      <option
+        data-option="/Shape/Gaunpalika"
+        value="/Shape/Gaunpalika/Baragadhi"
+        >Baragadhi</option
+      >
+      <option
+        data-option="/Shape/Gaunpalika"
+        value="/Shape/Gaunpalika/Bishrampur"
+        >Bishrampur</option
+      >
+      <option data-option="/Shape/Gaunpalika" value="/Shape/Gaunpalika/Devtal"
+        >Devtal</option
+      >
+      <option
+        data-option="/Shape/Gaunpalika"
+        value="/Shape/Gaunpalika/Karaiyamai"
+        >Karaiyamai</option
+      >
+      <option
+        data-option="/Shape/Gaunpalika"
+        value="/Shape/Gaunpalika/Parwanipur"
+        >Parwanipur</option
+      >
+      <option data-option="/Shape/Gaunpalika" value="/Shape/Gaunpalika/Pheta"
+        >Pheta</option
+      >
+      <option data-option="/Shape/Gaunpalika" value="/Shape/Gaunpalika/Prasauni"
+        >Prasauni</option
+      >
+      <option data-option="/Shape/Gaunpalika" value="/Shape/Gaunpalika/Suwarna"
+        >Suwarna</option
+      >
+      <option data-option="/Shape/Gaunpalika" value="/Shape/Gaunpalika"
+        >Select Gaunpalika</option
+      >
+    </select>
+    <script>
+      var sel1 = document.querySelector("#sel1");
+      var sel2 = document.querySelector("#sel2");
+      var options2 = sel2.querySelectorAll("option");
+
+      function giveSelection(selValue) {
+        sel2.innerHTML = "";
+        for (var i = 0; i < options2.length; i++) {
+          if (options2[i].dataset.option === selValue) {
+            sel2.appendChild(options2[i]);
+          }
+        }
+      }
+      giveSelection(sel1.value);
+    </script>
+    <input
+      class="SubmitButton"
+      type="button"
+      value="Submit"
+      onclick="showPage1()"
+      style="font-size:16px; "
+    />
+    <br />
+    <script>
+      function our_layers(map, options) {
+        var marker = L.marker([27.7172, 85.324])
+          .addTo(map)
+          .bindPopup("Kathmandu");
+        var circle = L.circle([27.7172, 85.324], {
+          color: "red",
+          fillColor: "#f03",
+          fillOpacity: 0.5,
+          radius: 5000
+        }).addTo(map);
+        var shape_datas = new L.GeoJSON.AJAX("/api/{{sucess}}", {
+          dataType: "json",
+          onEachFeature: function(feature, layer) {
+            layer.bindPopup(feature.properties.palika.toString());
+          }
+        });
+        shape_datas.addTo(map);
+        var baseMaps = {
+          circle: circle
+        };
+
+        var overlayMaps = {
+          points: shape_datas
+        };
+        L.control.layers(baseMaps, overlayMaps).addTo(map);
+      }
+    </script>
+    {% leaflet_map "gis" callback="window.our_layers" %}
+  </body>
+</html>
