@@ -6,7 +6,7 @@ cffi==1.13.2
 chardet==3.0.4
 cryptography==2.8
 Deprecated==1.2.7
-Django==3.0.4
+Django==3.0.7
 django-leaflet==0.26.0
 gitdb2==2.0.6
 GitPython==3.0.5
